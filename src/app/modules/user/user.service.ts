@@ -1,25 +1,30 @@
+import { IUser } from "./user.interface";
 import User from "./user.model";
 
-export const createUserToDB = async () => {
-    const user = await new User(
-      {
-        id: 's-1-49656255',
-        role: 'teacher',
-        password: 'strong-password',
-        name: {
-          firstName: 'Bob',
-          lastName: "The Canadian",
-        },
-        dateOfBirth: '18 February 1962',
-        gender: 'male',
-        email: 'bobthecanadian@gmail.com',
-        contactNo: '+9956545665',
-        emergencyContactNo: '+9956545665',
-        presentAddress: 'Toronto, Canada',
-        permanentAddress: 'Toronto, Canada',
-      }
-    );
-  
+export const createUserToDB = async (payload: IUser): Promise<IUser> => {
+    const user = new User(payload);
     await user.save();
     return user;
 };
+
+export const getUsersFromDB = async (): Promise<IUser[]> => {
+    const users = await User.find();
+    return users;
+};
+
+export const getUserByIdFromDB = async (payload: string): Promise<IUser | null> => {
+    const user = await User.findOne({ id: payload });
+    return user;
+};
+
+// Find only { name: 1, email: 1, presentAddress: 1 } these 3
+// export const getUserByIdFromDB = async (payload: string): Promise<IUser | null> => {
+//     const user = await User.findOne({ id: payload }, { name: 1, email: 1, presentAddress: 1 });
+//     return user;
+// };
+
+// Find without only passwprd
+// export const getUserByIdFromDB = async (payload: string): Promise<IUser | null> => {
+//     const user = await User.findOne({ id: payload }, { password: 0 });
+//     return user;
+// };
